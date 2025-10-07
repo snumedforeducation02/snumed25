@@ -4,3 +4,45 @@ body { font-family: sans-serif; text-align: center; padding: 20px; }
 button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
 #result-area { margin-top: 30px; text-align: left; }
 .hidden { display: none; }
+/* 체크리스트 스타일 */
+.checklist {
+    margin-top: 30px;
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    text-align: left;
+}
+
+.checklist h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 18px;
+    text-align: center;
+}
+
+.check-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.check-item input[type="checkbox"] {
+    margin-right: 10px; /* 체크박스와 글자 사이 간격 */
+    width: 16px;
+    height: 16px;
+}
+
+.check-item label {
+    font-size: 16px;
+}
+/* style.css 파일 */
+
+h1 {
+    font-size: 28px;
+    margin-bottom: 40px; /* h1 아래쪽에 20px 만큼의 여백을 추가 */
+}
+/* .warning-text 클래스가 있는 요소에만 적용될 스타일 */
+.notice {
+    margin-bottom: 40px; /* h1 아래쪽에 20px 만큼의 여백을 추가 */
+}
