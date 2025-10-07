@@ -32,7 +32,26 @@ analyzeButton.addEventListener('click', async () => {
             await worker.terminate(); // 작업 완료 후 worker 종료
         }
 
+        // --- 여기에 체크리스트 데이터 수집 로직 추가 ---
+        const checklistData = {
+            'req-volunteer': document.getElementById('req-volunteer').checked,
+            'req-cpr': document.getElementById('req-cpr').checked,
+            'req-leadership': document.getElementById('req-leadership').checked,
+            'req-reading': document.getElementById('req-reading').checked,
+            'elec-council': document.getElementById('elec-council').checked,
+            'elec-club': document.getElementById('elec-club').checked,
+            'elec-award': document.getElementById('elec-award').checked,
+            'elec-exchange': document.getElementById('elec-exchange').checked,
+        };
+
         loadingText.textContent = '분석 결과를 서버에서 받아오는 중...';
+
+         // 추출된 텍스트와 체크리스트 데이터를 백엔드로 전송
+        const response = await fetch('/.netlify/functions/analyze', {
+            method: 'POST',
+            // body에 checklist 데이터 추가
+            body: JSON.stringify({ text: allText, checklist: checklistData }), 
+        });
 
         // 추출된 전체 텍스트를 백엔드(Netlify 함수)로 전송
         const response = await fetch('/.netlify/functions/analyze', {
