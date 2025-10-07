@@ -34,7 +34,6 @@ exports.handler = async (event) => {
         switch (category) {
             case "전공 필수":
                 displayType = 'list_all';
-                 const ocrWords = [...new Set(allText.match(/[a-zA-Z0-9가-힣]{2,}/g) || [])];
 
     categoryData.courses.forEach(course => {
         allRequiredCourseNames.add(course);
@@ -55,7 +54,6 @@ exports.handler = async (event) => {
             case "전공 선택":
                 displayType = 'count';
                 requiredCount = 4;
-                 const ocrWords = [...new Set(allText.match(/[a-zA-Z0-9가-힣]{2,}/g) || [])];
 
     categoryData.courses.forEach(course => {
         allRequiredCourseNames.add(course);
