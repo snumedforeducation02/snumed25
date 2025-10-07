@@ -38,7 +38,7 @@ analyzeButton.addEventListener('click', async () => {
             'cpr': document.getElementById('cpr').checked,
             'leadership': document.getElementById('leadership').checked,
             'reading': document.getElementById('reading').checked,
-            'HnS': document.getElementById('HnS').checked,
+            'human': document.getElementById('human').checked,
             'study': document.getElementById('study').checked,
             'cpm': document.getElementById('cpm').checked,
             'teps': document.getElementById('teps').checked,
