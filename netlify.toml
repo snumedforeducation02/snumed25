@@ -1,3 +1,5 @@
 [functions]
   directory = "netlify/functions/"
   included_files = ["requirements.json"]
+  included_files = ["package.json"]
+  included_files = ["package-lock.json"]
