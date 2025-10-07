@@ -75,7 +75,7 @@ exports.handler = async (event) => {
                     }
                 }
                 if (!foreignLanguageCompleted) {
-                    remaining.push("외국어 (택1)");
+                    remaining.push("외국어(택1)");
                 }
                 foreignLanguages.forEach(c => allRequiredCourseNames.add(c));
 
