@@ -50,3 +50,8 @@ h1 {
     font-size: 16px;
     margin-top: 15px; 
 }
+.error-notice {
+    font-size: 14px;
+    color: #666;
+    margin-top: 15px;
+}
