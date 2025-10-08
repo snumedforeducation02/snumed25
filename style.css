@@ -40,11 +40,11 @@ button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
 
 h1 {
     font-size: 28px;
-    margin-bottom: 40px; /* h1 아래쪽에 20px 만큼의 여백을 추가 */
+    margin-bottom: 30px; /* h1 아래쪽에 20px 만큼의 여백을 추가 */
 }
 /* .warning-text 클래스가 있는 요소에만 적용될 스타일 */
 .notice {
-    margin-bottom: 40px; 
+    margin-bottom: 30px; 
 }
 .alert {
     font-size: 16px;
