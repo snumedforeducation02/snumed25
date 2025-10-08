@@ -69,3 +69,8 @@ h1 {
 .category-result h3 {
     margin-bottom: 15px; 
 }
+.highlight {
+    background-color: yellow; /* 형광펜 효과 */
+    color: black; /* 글자색 (배경색에 따라 조정) */
+    font-weight: bold; /* 글자를 굵게 (선택 사항) */
+}
