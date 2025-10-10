@@ -203,18 +203,30 @@ exports.handler = async (event) => {
         };
     }
 
-    // ...
-analysisResult["비교과"] = {
-    description: "비교과 수료 요건 달성 현황입니다.",
-    data: checklist,
-    displayType: 'checklist'
-};
-analysisResult["기타 이수 과목"] = {
-    description: "수료 기준에 포함되지 않은 이수 과목 목록입니다.",
-    completed: otherCompletedCourses,
-    displayType: 'list_completed_only'
-};
+  // ...
+    analysisResult["비교과"] = {
+        description: "비교과 수료 요건 달성 현황입니다.",
+        data: checklist,
+        displayType: 'checklist'
+    };
 
+    // --- 여기에 빠진 코드를 추가하세요 ---
+    const courseCandidates = allText.match(/[a-zA-Z0-9가-힣]{2,}/g) || [];
+    const uniqueCourses = [...new Set(courseCandidates)];
+    const otherCompletedCourses = uniqueCourses.filter(course => !allRequiredCourseNames.has(course));
+    // --- 여기까지 ---
+
+    analysisResult["기타 이수 과목"] = {
+        description: "수료 기준에 포함되지 않은 이수 과목 목록입니다.",
+        completed: otherCompletedCourses, // 이제 정상적으로 작동합니다.
+        displayType: 'list_completed_only'
+    };
+
+    // 5. 최종 분석 결과 전송
+    return {
+        // ...
+    };
+// ...
 
     // 5. 최종 분석 결과 전송
     return {
