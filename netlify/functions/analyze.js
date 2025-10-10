@@ -69,6 +69,10 @@ exports.handler = async (event) => {
 
             // analyze.js
 
+            // analyze.js
+
+            // analyze.js
+
             case "필수 교양":
                 displayType = 'list_all'; 
                 const foreignLanguages = [
@@ -78,42 +82,46 @@ exports.handler = async (event) => {
                     "산스크리트어", "베트남어", "아랍어", "힌디어", "일본어",
                     "독문 강독"
                 ];
-                
-                // --- '대학 글쓰기' 특별 처리 로직 시작 ---
+
+                // --- 특별 처리 과목 목록 정의 ---
                 const collegeWriting1 = "대학 글쓰기 1";
                 const collegeWriting2 = "대학 글쓰기 2: 과학기술글쓰기";
-                let isWriting1Completed = false;
-                let isWriting2Completed = false;
+                const biology = "생물학";
+                const biologyLab = "생물학실험";
+                const specialCourses = [collegeWriting1, collegeWriting2, biology, biologyLab];
 
-                // 1. 가장 구체적인 '과학기술글' 키워드를 먼저 확인
+                // --- '대학 글쓰기' 특별 처리 ---
                 if (allText.includes("과학기술글")) {
                     completed.push(collegeWriting2);
-                    isWriting2Completed = true;
-                }
-                // 2. '과학기술글'이 없을 경우에만 '대학'과 '글쓰'를 확인
-                else if (allText.includes("대학") && allText.includes("글쓰")) {
+                } else if (allText.includes("대학") && allText.includes("글쓰")) {
                     completed.push(collegeWriting1);
-                    isWriting1Completed = true;
                 }
 
-                if (!isWriting1Completed) remaining.push(collegeWriting1);
-                if (!isWriting2Completed) remaining.push(collegeWriting2);
+                // --- '생물학' 및 '생물학실험' 특별 처리 ---
+                if (allText.includes("생물학실")) { // '생물학실험', '생물학실' 등 모두 포함
+                    completed.push(biologyLab);
+                } else if (allText.includes("생물학")) {
+                    completed.push(biology);
+                }
                 
-                allRequiredCourseNames.add(collegeWriting1);
-                allRequiredCourseNames.add(collegeWriting2);
-                // --- '대학 글쓰기' 특별 처리 로직 끝 ---
-
-
-                // '대학 글쓰기'와 외국어를 제외한 나머지 필수 교양 과목 목록
+                // 특별 처리 과목들의 미이수 목록 생성
+                specialCourses.forEach(course => {
+                    allRequiredCourseNames.add(course);
+                    if (!completed.includes(course)) {
+                        remaining.push(course);
+                    }
+                });
+                
+                // --- 나머지 과목 처리 ---
                 const otherCourses = categoryData.courses.filter(c => 
-                    !foreignLanguages.includes(c) && c !== collegeWriting1 && c !== collegeWriting2
+                    !foreignLanguages.includes(c) && !specialCourses.includes(c)
                 );
 
                 // 외국어 이수 여부 확인
                 let foreignLanguageCompleted = false;
                 for (const lang of foreignLanguages) {
                     if (stringSimilarity.findBestMatch(lang, ocrWords).bestMatch.rating > 0.6) {
-                        completed.push(lang);
+                        if (!completed.includes(lang)) completed.push(lang);
                         foreignLanguageCompleted = true;
                         break;
                     }
