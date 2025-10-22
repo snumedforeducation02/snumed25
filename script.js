@@ -9,7 +9,7 @@ const choices = new Choices(electiveSelectElement, {
     removeItemButton: true,
     placeholder: true,
     // 이 텍스트가 잘리지 않도록 CSS에서 너비를 확보합니다.
-    placeholderValue: '수강 과목 선택',
+    placeholderValue: '수강한 과목을 선택하세요',
     searchPlaceholderValue: '과목 검색...',
 });
 // --- 2. '학문의 세계' Choices.js 초기화 추가 ---
@@ -17,7 +17,7 @@ const academiaSelectElement = document.getElementById('foundations-of-academia-s
 const academiaChoices = new Choices(academiaSelectElement, {
     removeItemButton: true,
     placeholder: true,
-    placeholderValue: '수강 과목 선택',
+    placeholderValue: '수강한 과목을 선택하세요',
     searchPlaceholderValue: '과목 검색...',
     // 학문의 세계는 개수 제한이 없으므로 maxItemCount 옵션은 제외
 });
