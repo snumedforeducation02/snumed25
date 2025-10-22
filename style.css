@@ -74,3 +74,23 @@ h1 {
     color: black; /* 글자색 (배경색에 따라 조정) */
     font-weight: bold; /* 글자를 굵게 (선택 사항) */
 }
+/* style.css */
+
+/* 1. '전공 필수'와 '전공 선택' 섹션에 박스 스타일 적용 */
+.selection-box {
+    background-color: #f9f9f9;  /* 박스 배경색 */
+    border: 1px solid #e0e0e0;      /* 박스 테두리 */
+    border-radius: 8px;             /* 박스 모서리를 둥글게 */
+    padding: 20px 25px;             /* 박스 안쪽 여백 (상하 20px, 좌우 25px) */
+    margin-bottom: 25px;            /* 박스와 박스 사이의 간격 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* 은은한 그림자 효과 */
+}
+
+/* 2. '전공 선택' 드롭다운 박스를 중앙에 배치 */
+#elective-courses-select {
+    display: block;             /* select 요소를 블록처럼 다루기 위해 변경 */
+    margin-left: auto;          /* 왼쪽 여백을 자동으로 계산 */
+    margin-right: auto;         /* 오른쪽 여백을 자동으로 계산 */
+    width: 90%;                 /* 박스 너비의 90%를 차지하도록 설정 */
+    min-height: 160px;          /* 높이를 키워 여러 항목을 보기 편하게 함 */
+}
