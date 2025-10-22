@@ -3,32 +3,52 @@ const analyzeButton = document.getElementById('analyze-button');
 const resultArea = document.getElementById('result-area');
 const loadingIndicator = document.getElementById('loading');
 
+// === Choices.js 초기화 코드 추가 ===
+const electiveSelectElement = document.getElementById('elective-courses-select');
+// Choices 라이브러리를 사용하여 select 요소를 향상시킵니다.
+const choices = new Choices(electiveSelectElement, {
+    removeItemButton: true, // 선택 항목 제거 버튼 활성화
+    placeholder: true,
+    placeholderValue: '이수 완료한 과목을 선택하세요...', // 기본 안내 문구
+    searchPlaceholderValue: '과목 검색...', // 검색창 안내 문구
+});
+// ===================================
+
 // '분석 시작!' 버튼 클릭 이벤트
 analyzeButton.addEventListener('click', async () => {
-    // 월 1회 사용 제한 로직 (기존과 동일)
+    // 월 1회 사용 제한 로직
+    const lastUsed = localStorage.getItem('lastAnalysisTime');
+    const now = new Date();
+    if (lastUsed) {
+        const lastUsedDate = new Date(parseInt(lastUsed));
+        if (now.getFullYear() === lastUsedDate.getFullYear() && now.getMonth() === lastUsedDate.getMonth()) {
+            alert('이 기능은 한 달에 한 번만 사용할 수 있습니다.');
+            return; // 함수 실행 중단
+        }
+    }
 
-    // 로딩 UI를 보여줍니다.
+    // 로딩 UI 표시
     loadingIndicator.classList.remove('hidden');
     resultArea.innerHTML = '';
     
     try {
-        // --- 1. OCR 대신, 사용자가 선택한 과목 데이터를 수집합니다 ---
+        // --- 1. 사용자가 선택한 과목 데이터 수집 ---
         const completedCourses = [];
 
-        // 1-1. 체크된 '전공 필수' 과목들의 목록을 가져옵니다.
+        // 1-1. 체크된 '전공 필수' 과목 목록 가져오기
         document.querySelectorAll('#required-courses-list input[type="checkbox"]:checked').forEach(checkbox => {
             completedCourses.push(checkbox.value);
         });
 
-        // 1-2. 선택된 '전공 선택' 과목들의 목록을 가져옵니다.
-        document.querySelectorAll('#elective-courses-select option:checked').forEach(option => {
-            completedCourses.push(option.value);
-        });
-        
-        // 1-3. 수집된 모든 과목 이름을 공백으로 구분된 하나의 텍스트로 만듭니다.
+        // 1-2. Choices.js를 통해 선택된 '전공 선택' 과목 목록 가져오기
+        // Choices.js 인스턴스에서 선택된 값들을 가져옵니다.
+        const selectedElectives = choices.getValue(true); // true는 값만 가져오도록 함
+        completedCourses.push(...selectedElectives); // 선택된 과목들을 completedCourses 배열에 추가
+
+        // 1-3. 수집된 모든 과목 이름을 공백으로 구분된 하나의 텍스트로 만들기
         const allText = completedCourses.join(' ');
 
-        // --- 2. 기존 비교과 체크리스트 데이터 수집 로직은 그대로 유지합니다 ---
+        // --- 2. 비교과 체크리스트 데이터 수집 ---
         const checklistData = {
             'volunteer': document.getElementById('volunteer').checked,
             'cpr': document.getElementById('cpr').checked,
@@ -40,7 +60,7 @@ analyzeButton.addEventListener('click', async () => {
             'teps': document.getElementById('teps').checked,
         };
 
-        // --- 3. 백엔드로 교과목 텍스트와 비교과 데이터를 함께 전송합니다 ---
+        // --- 3. 백엔드로 데이터 전송 ---
         const response = await fetch('/.netlify/functions/analyze', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -52,16 +72,16 @@ analyzeButton.addEventListener('click', async () => {
         }
 
         const data = await response.json();
-        displayResults(data); // 결과를 화면에 표시
+        displayResults(data); // 결과 표시
 
-        // 분석 성공 시, 마지막 사용 시간을 저장합니다.
+        // 분석 성공 시 마지막 사용 시간 저장
         localStorage.setItem('lastAnalysisTime', now.getTime());
 
     } catch (error) {
         console.error('분석 중 오류 발생:', error);
         resultArea.innerHTML = `<p class="error">분석에 실패했습니다: ${error.message}</p>`;
     } finally {
-        // 로딩 UI를 숨깁니다.
+        // 로딩 UI 숨기기
         loadingIndicator.classList.add('hidden');
     }
 });
