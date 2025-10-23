@@ -88,6 +88,16 @@ analyzeButton.addEventListener('click', async () => {
         const allText = completedCourses.join(' ');
         });
         // -------------------------------------------------------------
+        // --- '타단과대 전공' 수강 횟수 가져오기 추가 ---
+        const otherCollegeCheckbox = document.getElementById('other-college-checkbox');
+        const otherCollegeCountInput = document.getElementById('other-college-count');
+
+        if (otherCollegeCheckbox.checked && otherCollegeCountInput.value) {
+            const count = parseInt(otherCollegeCountInput.value, 10) || 0;
+            for (let i = 0; i < count; i++) {
+                completedCourses.push('타단과대 전공');
+            }
+        }
 
         // --- 2. 비교과 체크리스트 데이터 수집 ---
         const checklistData = {
@@ -245,39 +255,4 @@ function displayResults(data) {
     }
     resultArea.innerHTML = html;
 }
-if (electiveSelectElement) {
-    electiveSelectElement.addEventListener('addItem', function(event) {
-        // 추가된 항목이 "타단과대 전공"인지 확인합니다.
-        if (event.detail.value === '타단과대 전공 (자연대, 농생대, 공대, 수의대, 치대, 혁신공유학부/교양 X)') {
-            // (핵심!) 방금 선택된 "타단과대 전공" 항목을 즉시 제거합니다.
-            // 이렇게 하면 원본 항목이 '사용'되지 않아 목록에서 사라지지 않습니다.
-            electiveChoices.removeActiveItemsByValue(event.detail.value);
 
-            // 이제 똑같이 생겼지만 고유한 ID를 가진 새로운 항목을 만들어 추가합니다.
-            const uniqueId = '타단과대 전공 (자연대, 농생대, 공대, 수의대, 치대, 혁신공유학부/교양 X)' + Date.now(); // 현재 시간을 이용해 고유 ID 생성
-            const newItem = {
-                value: uniqueId,
-                label: event.detail.label, // 이름은 동일하게 '타단과대 전공(...)'
-                customProperties: {
-                    isDuplicate: true // 중복 항목임을 식별하기 위한 속성
-                }
-            };
-            
-            // 기존에 선택된 다른 과목들과 함께 새로운 항목을 선택 목록에 설정합니다.
-            const currentValues = electiveChoices.getValue();
-            currentValues.push(newItem);
-            electiveChoices.setChoiceByValue(currentValues.map(item => item.value));
-            
-            // 최대 선택 가능 개수를 1 늘려줍니다.
-            electiveChoices.config.maxItemCount++;
-        }
-    });
-
-    electiveSelectElement.addEventListener('removeItem', function(event) {
-        // 제거된 항목이 우리가 만든 중복 항목인지 확인합니다.
-        if (event.detail.customProperties?.isDuplicate) {
-            // 최대 선택 가능 개수를 다시 1 줄여줍니다.
-            electiveChoices.config.maxItemCount--;
-        }
-    });
-}
