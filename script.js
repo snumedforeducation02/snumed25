@@ -1,3 +1,7 @@
+// ===================================================
+// ❗️❗️ script.js 파일 전체를 이 코드로 덮어쓰세요 ❗️❗️
+// ===================================================
+
 // HTML 요소들을 가져옵니다.
 const analyzeButton = document.getElementById('analyze-button');
 const resultArea = document.getElementById('result-area');
@@ -12,7 +16,6 @@ const choices = new Choices(electiveSelectElement, {
     searchPlaceholderValue: '과목 검색...',
     duplicateItemsAllowed: false,
 });
-// --- 2. '학문의 세계' Choices.js 초기화 추가 ---
 const academiaSelectElement = document.getElementById('foundations-of-academia-select');
 const academiaChoices = new Choices(academiaSelectElement, {
     removeItemButton: true,
@@ -20,7 +23,6 @@ const academiaChoices = new Choices(academiaSelectElement, {
     placeholderValue: '수강한 과목을 검색 및 선택하세요',
     searchPlaceholderValue: '과목 검색...',
 });
-// --- 3. '예체능' Choices.js 초기화 추가 ---
 const artsSelectElement = document.getElementById('arts-and-sports-select');
 const artsChoices = new Choices(artsSelectElement, {
     removeItemButton: true,
@@ -28,7 +30,6 @@ const artsChoices = new Choices(artsSelectElement, {
     placeholderValue: '수강한 과목을 검색 및 선택하세요',
     searchPlaceholderValue: '과목 검색...',
 });
-// --- 4. '외국어' Choices.js 초기화 추가 ---
 const languageSelectElement = document.getElementById('foreign-language-select');
 const languageChoices = new Choices(languageSelectElement, {
     removeItemButton: true,
@@ -41,14 +42,14 @@ const languageChoices = new Choices(languageSelectElement, {
 
 // '분석 시작!' 버튼 클릭 이벤트
 analyzeButton.addEventListener('click', async () => {
-    // 월 1회 사용 제한 로직 (기존 코드)
+    // 월 1회 사용 제한 로직
     const lastUsed = localStorage.getItem('lastAnalysisTime');
     const now = new Date();
     if (lastUsed) {
         const lastUsedDate = new Date(parseInt(lastUsed));
         if (now.getFullYear() === lastUsedDate.getFullYear() && now.getMonth() === lastUsedDate.getMonth()) {
             alert('이 기능은 한 달에 한 번만 사용할 수 있습니다.');
-            return; // 함수 실행 중단
+            return; 
         }
     }
 
@@ -64,44 +65,36 @@ analyzeButton.addEventListener('click', async () => {
         document.querySelectorAll('#required-courses-list input[type="checkbox"]:checked').forEach(checkbox => {
             completedCourses.push(checkbox.value);
         });
-
         // 1-2. 전공 선택
         const selectedElectives = choices.getValue(true);
         completedCourses.push(...selectedElectives);
-        
         // 1-3. 필수 교양 (체크박스)
         document.querySelectorAll('#liberal-arts-courses-list input[type="checkbox"]:checked').forEach(checkbox => {
             completedCourses.push(checkbox.value);
         }); 
-
         // 1-4. 필수 교양 (외국어)
         const selectedLanguages = languageChoices.getValue(true);
         completedCourses.push(...selectedLanguages);
-
         // 1-5. 학문의 세계
         const selectedAcademia = academiaChoices.getValue(true);
         completedCourses.push(...selectedAcademia);
-
         // 1-6. 예체능
         const selectedArts = artsChoices.getValue(true);
         completedCourses.push(...selectedArts);
-
         // 1-7. 타단과대
         const otherCollegeCheckbox = document.getElementById('other-college-checkbox');
         const otherCollegeCountInput = document.getElementById('other-college-count');
-        if (otherCollegeCheckbox.checked && otherCollegeCountInput.value) {
+        if (otherCollegeCheckbox.checked && otherCollegeCountInput && otherCollegeCountInput.value) {
             const count = parseInt(otherCollegeCountInput.value, 10) || 0;
             for (let i = 0; i < count; i++) {
                 completedCourses.push('타단과대 전공');
             }
         }
         
-        // 1-8. 음미대/미학과
-        // ❗️❗️ HTML 수정 확인: index.html의 숫자 입력칸 id가 "extra-artsandsports-count"인지 확인하세요!
+        // 1-8. 음미대/미학과 (❗️ 1단계에서 HTML ID를 수정해야 함)
         const extraAnSCheckbox = document.getElementById('extra-artsandsports-checkbox');
         const extraAnSCountInput = document.getElementById('extra-artsandsports-count'); 
         
-        // ❗️❗️ 오류 수정: extraAnSCountInput이 null일 때 .value 접근을 방지
         if (extraAnSCheckbox && extraAnSCheckbox.checked && extraAnSCountInput && extraAnSCountInput.value) {
             const count = parseInt(extraAnSCountInput.value, 10) || 0;
             for (let i = 0; i < count; i++) {
@@ -109,13 +102,11 @@ analyzeButton.addEventListener('click', async () => {
             }
         }
 
-        // ❗️❗️❗️ [버그 수정 1]
-        // allText는 모든 과목 수집이 끝난 후, fetch 직전에 선언되어야 합니다.
+        // ❗️❗️❗️ [버그 수정 1] allText 변수를 모든 수집이 끝난 후 선언
         const allText = completedCourses.join(' ');
 
         // --- 2. 비교과 체크리스트 데이터 수집 ---
-        // ❗️❗️❗️ [버그 수정 2]
-        // 누락되었던 모든 비교과 항목을 다시 추가합니다.
+        // ❗️❗️❗️ [버그 수정 2] 누락된 비교과 항목 모두 포함
         const checklistData = {
             'volunteer': document.getElementById('volunteer').checked,
             'cpr': document.getElementById('cpr').checked,
@@ -131,27 +122,23 @@ analyzeButton.addEventListener('click', async () => {
         const response = await fetch('/.netlify/functions/analyze', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            // allText가 'undefined'가 아닌 올바른 문자열로 전송됩니다.
-            body: JSON.stringify({ text: allText, checklist: checklistData }),
+            body: JSON.stringify({ text: allText, checklist: checklistData }), // ✅ 올바른 데이터 전송
         });
 
         if (!response.ok) {
-            // 서버가 500 오류 등을 반환하면 여기서 감지됩니다.
+            // ❗️ 여기가 140번째 줄 근처입니다. 서버가 멈추면 이 코드가 실행됩니다.
             throw new Error('서버에서 오류가 발생했습니다.'); 
         }
 
         const data = await response.json();
         displayResults(data); // 결과 표시
 
-        // 분석 성공 시 마지막 사용 시간 저장
         localStorage.setItem('lastAnalysisTime', now.getTime());
 
     } catch (error) {
         console.error('분석 중 오류 발생:', error);
-        // ❗️(수정) 사용자에게 더 친절한 오류 메시지 표시 (null 접근 오류 등)
         resultArea.innerHTML = `<p class="error">분석에 실패했습니다. 모든 항목을 올바르게 선택/입력했는지 확인해주세요. (오류: ${error.message})</p>`;
     } finally {
-        // 로딩 UI 숨기기
         loadingIndicator.classList.add('hidden');
     }
 });
@@ -184,12 +171,7 @@ function displayResults(data) {
                 break;
 
             case 'list_remaining_custom':
-                const remainingItems = details.remaining.map(item => {
-                    if (typeof item === 'object' && item !== null) {
-                        return "외국어 (택1)";
-                    }
-                    return item;
-                });
+                const remainingItems = details.remaining.map(item => (typeof item === 'object' && item !== null) ? "외국어 (택1)" : item);
                 const uniqueRemainingItems = [...new Set(remainingItems)];
                 html += `<p><strong>📝 미이수 항목:</strong> ${uniqueRemainingItems.length > 0 ? uniqueRemainingItems.join(', ') : '모두 이수 완료'}</p>`;
                 break;
@@ -199,10 +181,7 @@ function displayResults(data) {
                 const requiredCount = details.requiredCount;
                 const isCompleted = completedCount >= requiredCount;
                 const neededCount = Math.max(0, requiredCount - completedCount);
-
-                html += `<p class="summary ${isCompleted ? 'completed' : 'in-progress'}">
-                             <strong>상태: ${requiredCount}개 중 ${completedCount}개 이수 (${neededCount}개 남음) ${isCompleted ? '✔️' : ''}</strong>
-                         </p>`;
+                html += `<p class="summary ${isCompleted ? 'completed' : 'in-progress'}"><strong>상태: ${requiredCount}개 중 ${completedCount}개 이수 (${neededCount}개 남음) ${isCompleted ? '✔️' : ''}</strong></p>`;
                 if (completedCount > 0) {
                     html += `<p><strong>✅ 이수한 과목:</strong> ${details.completed.join(', ')}</p>`;
                 }
@@ -210,15 +189,10 @@ function displayResults(data) {
 
             case 'credit_count': // '전공 선택' 및 '예체능'
                 const isCreditsCompleted = details.remainingCredits === 0;
-                
-                html += `<p class="summary ${isCreditsCompleted ? 'completed' : 'in-progress'}">
-                             <strong>상태: ${details.requiredCredits}학점 중 ${details.completedCredits}학점 이수 (${details.remainingCredits}학점 남음) ${isCreditsCompleted ? '✔️' : ''}</strong>
-                         </p>`;
-                
+                html += `<p class="summary ${isCreditsCompleted ? 'completed' : 'in-progress'}"><strong>상태: ${details.requiredCredits}학점 중 ${details.completedCredits}학점 이수 (${details.remainingCredits}학점 남음) ${isCreditsCompleted ? '✔️' : ''}</strong></p>`;
                 if (details.completed.length > 0) {
                     html += `<p><strong>✅ 이수한 과목:</strong> ${details.completed.join(', ')}</p>`;
                 }
-                
                 if (details.recommended.length > 0 && !isCreditsCompleted) {
                     html += `<p><strong>💡 추천 과목:</strong> ${details.recommended.join(', ')}</p>`;
                 }
@@ -227,56 +201,31 @@ function displayResults(data) {
             case 'academia_group_count': // '학문의 세계'
                 const isGroupMet = details.completedGroupCount >= details.requiredGroupCount;
                 const isCreditMet = details.totalAcademiaCredits >= details.requiredCredits;
-                
                 const remainingGroupsCount = Math.max(0, 5 - details.completedGroupCount);
                 const remainingCredits = Math.max(0, details.requiredCredits - details.totalAcademiaCredits);
 
-                // 그룹 충족 현황
-                html += `<p class="summary ${isGroupMet ? 'completed' : 'in-progress'}">
-                             <strong>그룹: 5개 영역 중 ${details.completedGroupCount}개 영역 이수 (${remainingGroupsCount}개 영역 남음) ${isGroupMet ? '✔️' : ''}</strong>
-                         </p>`;
-                
-                // 학점 충족 현황
-                html += `<p class="summary ${isCreditMet ? 'completed' : 'in-progress'}">
-                             <strong>학점: ${details.requiredCredits}학점 중 ${details.totalAcademiaCredits}학점 이수 (${remainingCredits}학점 남음) ${isCreditMet ? '✔️' : ''}</strong>
-                         </p>`;
+                html += `<p class="summary ${isGroupMet ? 'completed' : 'in-progress'}"><strong>그룹: 5개 영역 중 ${details.completedGroupCount}개 영역 이수 (${remainingGroupsCount}개 영역 남음) ${isGroupMet ? '✔️' : ''}</strong></p>`;
+                html += `<p class="summary ${isCreditMet ? 'completed' : 'in-progress'}"><strong>학점: ${details.requiredCredits}학점 중 ${details.totalAcademiaCredits}학점 이수 (${remainingCredits}학점 남음) ${isCreditMet ? '✔️' : ''}</strong></p>`;
 
-                // 이수한 과목 목록 (영역 표시)
                 if (details.completedCourses.length > 0) {
                     const completedList = details.completedCourses.map(c => `${c.name} (${c.group})`).join(', ');
                     html += `<p><strong>✅ 이수한 과목 (영역):</strong> ${completedList}</p>`;
                 }
-
-                // 미이수 영역 및 추천 과목 버튼 (그룹 조건 미충족 시)
                 if (!isGroupMet && details.remainingGroups.length > 0) {
                     html += `<p><strong>📝 채워야 할 영역:</strong> ${details.remainingGroups.join(', ')}</p>`;
-                    
                     html += '<div class="recommendation-area"><strong>💡 영역별 들을 수 있는 교양 (클릭하여 확인):</strong>';
-                    
                     for (const groupName of details.remainingGroups) {
                         const coursesInGroup = details.recommendedCoursesByGroup[groupName] || [];
-                        const elementId = `courses-list-${groupName.replace(/[^a-zA-Z0-9]/g, '')}`; // ID 고유화
-                        
-                        // 토글 버튼
-                        html += `<button class="toggle-button" onclick="toggleCourseList('${elementId}')">
-                                     ${groupName} 과목 목록 보기 (${coursesInGroup.length}개)
-                                 </button>`;
-                        
-                        // 숨겨진 과목 목록 Div
-                        html += `<div id="${elementId}" class="course-list-hidden" style="display: none; margin: 5px 0 10px 10px; padding: 8px; background: #f9f9f9; border: 1px solid #eee; border-radius: 4px;">
-                                     ${coursesInGroup.join(', ')}
-                                 </div>`;
+                        const elementId = `courses-list-${groupName.replace(/[^a-zA-Z0-9]/g, '')}`; 
+                        html += `<button class="toggle-button" onclick="toggleCourseList('${elementId}')">${groupName} 과목 목록 보기 (${coursesInGroup.length}개)</button>`;
+                        html += `<div id="${elementId}" class="course-list-hidden" style="display: none; margin: 5px 0 10px 10px; padding: 8px; background: #f9f9f9; border: 1px solid #eee; border-radius: 4px;">${coursesInGroup.join(', ')}</div>`;
                     }
                     html += '</div>';
                 }
                 break;
                 
             case 'list_completed_only':
-                if (details.completed.length > 0) {
-                    html += `<p><strong>✅ 이수한 과목:</strong> ${details.completed.join(', ')}</p>`;
-                } else {
-                    html += `<p>이수한 과목이 없습니다.</p>`;
-                }
+                html += `<p><strong>✅ 이수한 과목:</strong> ${details.completed.length > 0 ? details.completed.join(', ') : '없음'}</p>`;
                 break;
                 
             case 'checklist': // '비교과'
@@ -286,8 +235,7 @@ function displayResults(data) {
                 const elecCompleted = [];
                 const requiredElecCount = 2;
 
-                // ❗️❗️ [버그 수정 3]
-                // 1. 이수한 항목(details.data)을 기준으로 순회
+                // [버그 수정 3] 미체크 항목을 올바르게 찾도록 수정
                 for (const key in details.data) {
                     if (details.data[key]) { // true (체크된) 항목만 처리
                         const label = checklistLabels[key];
@@ -298,9 +246,8 @@ function displayResults(data) {
                         }
                     }
                 }
-                // 2. 미이수 필수 항목을 찾기 위해 *전체* 필수 목록을 순회
                 for (const key of requiredKeys) {
-                    if (!details.data[key]) { // false (미체크) 또는 undefined
+                    if (!details.data[key]) { // false (미체크)
                         reqIncomplete.push(checklistLabels[key]);
                     }
                 }
@@ -311,9 +258,7 @@ function displayResults(data) {
                 const neededElecCount = Math.max(0, requiredElecCount - elecCompleted.length);
                 const isElecCompleted = neededElecCount === 0;
 
-                html += `<p class="summary ${isElecCompleted ? 'completed' : 'in-progress'}">
-                             <strong>선택 요건 상태: ${requiredElecCount}개 이상 중 ${elecCompleted.length}개 완료 (${neededElecCount}개 더 필요) ${isElecCompleted ? '✔️' : ''}</strong>
-                         </p>`;
+                html += `<p class="summary ${isElecCompleted ? 'completed' : 'in-progress'}"><strong>선택 요건 상태: ${requiredElecCount}개 이상 중 ${elecCompleted.length}개 완료 (${neededElecCount}개 더 필요) ${isElecCompleted ? '✔️' : ''}</strong></p>`;
                 if (elecCompleted.length > 0) {
                     html += `<p><strong>✅ 완료한 선택 요건:</strong> ${elecCompleted.join(', ')}</p>`;
                 }
