@@ -171,37 +171,22 @@ function displayResults(data) {
                     html += `<p><strong>✅ 이수한 과목:</strong> ${details.completed.join(', ')}</p>`;
                 }
                 break;
-
-            // ❗️❗️ [버그 수정 1] 전공 선택 / 예체능 ❗️❗️
-            case 'credit_count':
+ case 'credit_count':
                 const isCreditsCompleted = details.remainingCredits === 0;
                 html += `<p class="summary ${isCreditsCompleted ? 'completed' : 'in-progress'}"><strong>상태: ${details.requiredCredits}학점 중 ${details.completedCredits}학점 이수 (${details.remainingCredits}학점 남음) ${isCreditsCompleted ? '✔️' : ''}</strong></p>`;
-                
-                if (details.completed.length > 0) {
-                    html += `<p><strong>✅ 이수한 과목:</strong> ${details.completed.join(', ')}</p>`;
-                }
-                
+                if (details.completed.length > 0) html += `<p><strong>✅ 이수한 과목:</strong> ${details.completed.join(', ')}</p>`;
                 if (details.recommended.length > 0 && !isCreditsCompleted) {
-                    const safeCategoryName = category.replace(/[^a-zA-Z0-9]/g, '');
+                    const safeCategoryName = 'category-' + encodeURIComponent(category);
                     const elementId = `courses-list-${safeCategoryName}`;
-                    
                     html += `<div class="recommendation-area single-button-area">`;
                     html += `<strong>💡 수강 가능 과목 (클릭하여 확인):</strong>`;
-                    
-                    // ❗️ [수정] 버튼 텍스트를 'category' 변수와 'details'를 사용하도록 수정
-                    html += `<button class="toggle-button" onclick="toggleCourseList('${elementId}')">
-                                 〈${category}〉 과목 목록
-                             </button>`;
-                    
-                    const courseListHtml = details.recommended.map(course => `<li>${course}</li>`).join('');
-                    html += `<div id="${elementId}" class="course-list-hidden">
-                                 <ul class="recommended-list">${courseListHtml}</ul>
-                             </div>`;
+                    html += `<button class="toggle-button" onclick="toggleCourseList('${elementId}')">〈${category}〉 과목 목록</button>`;
+                    const courseListHtml = details.recommended.map(c => `<li>${c}</li>`).join('');
+                    html += `<div id="${elementId}" class="course-list-hidden"><ul class="recommended-list">${courseListHtml}</ul></div>`;
                     html += `</div>`;
                 }
                 break;
 
-            // ❗️❗️ [버그 수정 2] 학문의 세계 ❗️❗️
             case 'academia_group_count':
                 const isGroupMet = details.completedGroupCount >= details.requiredGroupCount;
                 const isCreditMet = details.totalAcademiaCredits >= details.requiredCredits;
@@ -215,27 +200,20 @@ function displayResults(data) {
                     const completedList = details.completedCourses.map(c => `${c.name} (${c.group})`).join(', ');
                     html += `<p><strong>✅ 이수한 과목 (영역):</strong> ${completedList}</p>`;
                 }
+
                 if (!isGroupMet && details.remainingGroups.length > 0) {
                     html += `<p><strong>📝 채워야 할 영역:</strong> ${details.remainingGroups.join(', ')}</p>`;
-                    
-                    html += '<div class="recommendation-area multi-button-area">'; 
+                    html += '<div class="recommendation-area multi-button-area">';
                     html += '<strong>💡 영역별 들을 수 있는 교양 (클릭하여 확인):</strong>';
-                    
                     for (const groupName of details.remainingGroups) {
-                        const coursesInGroup = details.recommendedCoursesByGroup[groupName] || [];
-                        const elementId = `courses-list-${groupName.replace(/[^a-zA-Z0-9]/g, '')}`; 
-                        
-                        // ❗️ [수정] 꺾쇠(<, >) 오류 수정 및 과목 개수 추가
+                        const elementId = `courses-list-${encodeURIComponent(groupName)}`;
                         html += `<button class="toggle-button" onclick="toggleCourseList('${elementId}')">〈${groupName}〉 과목 목록</button>`;
                     }
-
                     for (const groupName of details.remainingGroups) {
+                        const elementId = `courses-list-${encodeURIComponent(groupName)}`;
                         const coursesInGroup = details.recommendedCoursesByGroup[groupName] || [];
-                        const elementId = `courses-list-${groupName.replace(/[^a-zA-Z0-9]/g, '')}`; 
-                        const courseListHtml = coursesInGroup.map(course => `<li>${course}</li>`).join('');
-                        html += `<div id="${elementId}" class="course-list-hidden">
-                                     <ul class="recommended-list">${courseListHtml}</ul>
-                                 </div>`;
+                        const courseListHtml = coursesInGroup.map(c => `<li>${c}</li>`).join('');
+                        html += `<div id="${elementId}" class="course-list-hidden"><ul class="recommended-list">${courseListHtml}</ul></div>`;
                     }
                     html += '</div>';
                 }
