@@ -293,10 +293,10 @@ button#analyze-button:hover {
     margin-bottom: 5px;
 }
 
-/* 7. "학문의 세계" (multi-button-area) 버튼 2열 레이아웃 */
+/* 7. "지성의 열쇠/베리타스" (multi-button-area) 버튼 3열 레이아웃 */
 .multi-button-area .toggle-button {
     display: inline-block;
-    width: calc(50% - 6px);
+    width: calc(33.3% - 6px);
     margin: 3px;
     box-sizing: border-box;
     vertical-align: top;
@@ -422,7 +422,7 @@ button#analyze-button:hover {
         padding: 3px 8px;
     }
     
-    /* 7. '학문의 세계' 버튼 1열로 */
+    /* 7. '지성의 열쇠/베리타스' 버튼 1열로 */
     .multi-button-area .toggle-button {
         width: 100%;
         margin: 4px 0;
