@@ -199,14 +199,16 @@ function displayResults(data) {
                 }
                 break;
 
-            case 'academia_group_count':
-                const isGroupMet = details.completedGroupCount >= details.requiredGroupCount;
+ case 'academia_group_count':
+                const isGroupMet = details.isGroupMet; 
                 const isCreditMet = details.totalAcademiaCredits >= details.requiredCredits;
-                const remainingGroupsCount = Math.max(0, 5 - details.completedGroupCount);
+                const totalGroups = details.requiredGroupCount;
+                const completedGroups = details.completedGroupCount;
+                const remainingGroupsCount = Math.max(0, totalGroups - completedGroups); 
                 const remainingCredits = Math.max(0, details.requiredCredits - details.totalAcademiaCredits);
 
-                html += `<p class="summary ${isGroupMet ? 'completed' : 'in-progress'}"><strong>영역: 5개 영역 중 ${details.completedGroupCount}개 영역 이수 (${remainingGroupsCount}개 영역 남음) ${isGroupMet ? '✔️' : ''}</strong></p>`;
-                html += `<p class="summary ${isCreditMet ? 'completed' : 'in-progress'}"><strong>학점: ${details.requiredCredits}학점 중 ${details.totalAcademiaCredits}학점 이수 (${remainingCredits}학점 남음) ${isCreditMet ? '✔️' : ''}</strong></p>`;
+                html += `<p class="summary ${isGroupMet ? 'completed' : 'in-progress'}"><strong>영역: ${totalGroups}개 영역 중 ${completedGroups}개 영역 3학점 이상 이수 (${remainingGroupsCount}개 영역 남음) ${isGroupMet ? '✔️' : ''}</strong></p>`;
+                html += `<p class="summary ${isCreditMet ? 'completed' : 'in-progress'}"><strong>학점: ${details.requiredCredits}학점 중 ${details.totalAcademiaCredits || 0}학점 이수 (${remainingCredits}학점 남음) ${isCreditMet ? '✔️' : ''}</strong></p>`; 
 
                 if (details.completedCourses.length > 0) {
                     const completedList = details.completedCourses.map(c => `${c.name} (${c.group})`).join(', ');
