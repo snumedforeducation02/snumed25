@@ -122,7 +122,13 @@ analyzeButton.addEventListener('click', async () => {
 });
 
 function displayResults(data) {
-    let html = '<h2>🔍 분석 결과</h2>';
+    let html = `
+        <div class="result-header">
+            <h2>🔍 분석 결과</h2>
+            <button id="capture-button" class="toggle-button save-button" onclick="captureResults()">
+                결과 이미지로 저장 📸
+            </button>
+        </div>`;
     
     const categoryOrder = [
         "전공 필수", "전공 선택", "필수 교양", 
